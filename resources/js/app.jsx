@@ -6,7 +6,7 @@
 
 import './bootstrap';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client'; // Import createRoot
 import Timer from './components/Timer';
 
 /**
@@ -26,7 +26,12 @@ function App() {
     );
 }
 
-// This code checks if there's an element with id 'app' in your blade template and then renders the React app within it.
-if (document.getElementById('app')) {
-    ReactDOM.render(<App />, document.getElementById('app'));
+// Find the app element
+const appEl = document.getElementById('app');
+if (appEl) {
+    // Create a root.
+    const root = createRoot(appEl);
+
+    // Initial render: Render the app into the root.
+    root.render(<App />);
 }
