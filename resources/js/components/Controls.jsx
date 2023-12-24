@@ -13,3 +13,4 @@ const Controls = ({ isActive, toggleActive, skipSession, toggleMute, isMuted }) 
         </div>
     );
 };
+export default Controls;

@@ -1,4 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import TimerDisplay from './TimerDisplay';
+import ProgressBar from './ProgressBar';
+import Controls from './Controls';
+import AudioComponent from './AudioComponent';
 
 const Timer = () => {
     const workTime = 45 * 60; // 45 minutes in seconds
@@ -8,8 +12,8 @@ const Timer = () => {
     const [isActive, setIsActive] = useState(false);
     const [pausedTime, setPausedTime] = useState(0);
     const timerId = useRef(null);
-    const workAudioRef = useRef(null);
-    const breakAudioRef = useRef(null);
+    const workAudioRef = useRef(new Audio("/sounds/work-sound.mp3"));
+    const breakAudioRef = useRef(new Audio("/sounds/break-sound.mp3"));
     const [muted, setMuted] = useState(false);
 
 
@@ -131,9 +135,6 @@ const Timer = () => {
         }
     }, [muted, isActive, isWorking]);
 
-
-
-
     // Function to pause the audio
     const pauseAudio = () => {
         workAudioRef.current.pause();
@@ -172,16 +173,6 @@ const Timer = () => {
     };
 
 
-
-
-
-    const formatTime = (time) => {
-        const minutes = Math.floor(time / 60);
-        const seconds = time % 60;
-        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    };
-
-
     useEffect(() => {
         if ('Notification' in window && Notification.permission !== 'granted') {
             Notification.requestPermission();
@@ -195,36 +186,26 @@ const Timer = () => {
         }
     };
 
-
-
     return (
         <div className="bg-light d-flex align-items-center justify-content-center min-vh-100">
             <div className="bg-white p-4 rounded shadow-lg w-50 text-center">
                 <h1 className="h3 mb-3">{isWorking ? "Working Time" : "Break Time"}</h1>
-                <div className="display-4 font-weight-bold mb-4">{formatTime(remainingTime)}</div>
-                <div className="progress mb-3" style={{height: '20px'}}>
-                    <div
-                        className="progress-bar bg-success"
-                        role="progressbar"
-                        style={{width: `${(1 - remainingTime / (isWorking ? workTime : breakTime)) * 100}%`}}  // Calculate the elapsed percentage
-                        aria-valuenow={remainingTime}
-                        aria-valuemin="0"
-                        aria-valuemax={isWorking ? workTime : breakTime}
-                    ></div>
-                </div>
-
-                <div className="mb-4">
-                    <button onClick={toggleActive}
-                            className={`btn btn-lg btn-block mb-3 ${isActive ? "btn-danger" : "btn-success"}`}>
-                        {isActive ? 'Pause' : 'Start'}
-                    </button>
-                    <button onClick={() => skipSession()} className="btn btn-primary btn-lg">Skip Session</button>
-                    <button onClick={toggleMute} className="pauseSound">
-                        <i className={`fa-solid ${muted ? "fa-play" : "fa-pause"}`}></i>
-                    </button>
-                </div>
-                <audio ref={workAudioRef} src="/sounds/work-sound.mp3" preload="auto"></audio>
-                <audio ref={breakAudioRef} src="/sounds/break-sound.mp3" preload="auto"></audio>
+                <TimerDisplay remainingTime={remainingTime} />
+                <ProgressBar remainingTime={remainingTime} isWorking={isWorking} workTime={workTime} breakTime={breakTime} />
+                <Controls
+                    isActive={isActive}
+                    toggleActive={toggleActive}
+                    skipSession={skipSession}
+                    toggleMute={toggleMute}
+                    isMuted={muted}
+                />
+                <AudioComponent
+                    isActive={isActive}
+                    isWorking={isWorking}
+                    muted={muted}
+                    workAudioRef={workAudioRef}
+                    breakAudioRef={breakAudioRef}
+                />
             </div>
         </div>
     );

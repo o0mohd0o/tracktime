@@ -1,3 +1,5 @@
+import Controls from "./Controls.jsx";
+
 const ProgressBar = ({ remainingTime, isWorking, workTime, breakTime }) => {
     const progressPercent = (1 - remainingTime / (isWorking ? workTime : breakTime)) * 100;
 
@@ -14,3 +16,5 @@ const ProgressBar = ({ remainingTime, isWorking, workTime, breakTime }) => {
         </div>
     );
 };
+
+export default ProgressBar;
